@@ -143,7 +143,28 @@ class BowlEnv:
             err = Rotation.from_matrix(self.home_rot(yaw) @ self.eef_rot().T).as_rotvec()
             a[3:6] = np.clip(err / OSC_STEP_RAD, -1, 1)
         a[6] = grip
+        self.last_action = a
         self.step(a)
+
+    def eef_yaw(self):
+        x = self.eef_rot()[:, 0]                 # home: site x-axis = world +y
+        return float(np.arctan2(-x[0], x[1]))
+
+    def gripper_opening(self):
+        m, d = self.sim.model, self.sim.data
+        j1 = m.get_joint_qpos_addr("gripper0_finger_joint1")
+        j2 = m.get_joint_qpos_addr("gripper0_finger_joint2")
+        return float(d.qpos[j1] - d.qpos[j2])
+
+    def policy_obs(self, goal_xy):
+        """Low-dimensional state for the distilled policy (bowl-centric, so it is
+        invariant to where the bowl is on the table)."""
+        b = self.bowl_pos()
+        e = self.eef_pos()
+        yaw = self.eef_yaw()
+        return np.r_[e - b, e[2] - self.table_z, np.sin(yaw), np.cos(yaw),
+                     self.gripper_opening(), np.asarray(goal_xy) - b[:2],
+                     self.bowl_tilt_deg() / 45.0].astype(np.float32)
 
     @staticmethod
     def home_rot(yaw):

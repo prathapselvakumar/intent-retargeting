@@ -150,7 +150,10 @@ class Planner:
         th_mu, th_sd = 0.0, None                           # None → uniform angle
         if prior is not None:
             mode_p = np.array([prior["mode_p"][m] for m in MODES])
-            th_mu, th_sd = prior["theta"], np.radians(30)
+            if "theta_rel" in prior:          # strategy prior: angle relative to motion
+                th_mu, th_sd = phi0 + prior["theta_rel"], prior["theta_rel_sd"]
+            else:                             # clip prior: absolute rim angle
+                th_mu, th_sd = prior["theta"], np.radians(30)
         h_mu, h_sd = np.mean(H_RANGE), 0.012
         phi_mu, phi_sd = phi0, np.radians(25)
         d_mu, d_sd = d0, 0.4 * d0 + 0.01
@@ -201,3 +204,26 @@ def human_prior(intent_json: Path):
               "pull": dict(push=0.1, inside=0.3, pinch=0.6)}[seg["mode"]]
     return dict(theta=float(np.arctan2(np.sin(theta), np.cos(theta))), mode_p=mode_p,
                 source=dict(rim_angle_deg=seg["rim_angle_deg"], mode=seg["mode"]))
+
+
+def human_strategy_prior(intent_jsons):
+    """Contact prior that generalises to any goal: the rim angle RELATIVE to the bowl's
+    motion direction, pooled over all human clips. (Both recorded clips — right hand
+    pushing away, left hand pulling back — grip the rim ~100° clockwise of the motion.)"""
+    rels, modes = [], []
+    for f in intent_jsons:
+        seg = max(json.loads(Path(f).read_text())["segments"], key=lambda s: s["moved_cm"])
+        theta = np.radians(seg["rim_angle_deg"] - 90.0)
+        dx, dy = seg["bowl_delta_cm"]
+        phi = np.arctan2(-dx, dy)                         # human → robot frame
+        rels.append(np.arctan2(np.sin(theta - phi), np.cos(theta - phi)))
+        modes.append(seg["mode"])
+    rels = np.array(rels)
+    mu = float(np.arctan2(np.sin(rels).mean(), np.cos(rels).mean()))
+    sd = max(np.radians(15), float(np.std(rels)))
+    drag_like = sum(m in ("drag", "pull") for m in modes) / len(modes)
+    mode_p = dict(push=0.15 + 0.45 * (1 - drag_like), inside=0.25,
+                  pinch=0.15 + 0.45 * drag_like)
+    z = sum(mode_p.values())
+    return dict(theta_rel=mu, theta_rel_sd=sd, mode_p={k: v / z for k, v in mode_p.items()},
+                source=dict(rel_deg=np.degrees(rels).round(1).tolist(), modes=modes))

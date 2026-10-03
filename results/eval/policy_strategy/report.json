@@ -1,0 +1,36 @@
+{
+  "method": "policy_strategy",
+  "random": {
+    "success": 37,
+    "n": 50,
+    "rate": 74.0,
+    "ci95": [
+      60.4,
+      84.1
+    ],
+    "median_err_D": 0.051,
+    "policy_ms_per_query": 0.74
+  },
+  "human_right": {
+    "success": 43,
+    "n": 50,
+    "rate": 86.0,
+    "ci95": [
+      73.8,
+      93.0
+    ],
+    "median_err_D": 0.049,
+    "policy_ms_per_query": 0.71
+  },
+  "human_left": {
+    "success": 49,
+    "n": 50,
+    "rate": 98.0,
+    "ci95": [
+      89.5,
+      99.6
+    ],
+    "median_err_D": 0.045,
+    "policy_ms_per_query": 0.81
+  }
+}

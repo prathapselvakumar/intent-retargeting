@@ -1,0 +1,36 @@
+{
+  "method": "policy_none",
+  "random": {
+    "success": 26,
+    "n": 50,
+    "rate": 52.0,
+    "ci95": [
+      38.5,
+      65.2
+    ],
+    "median_err_D": 0.098,
+    "policy_ms_per_query": 0.44
+  },
+  "human_right": {
+    "success": 30,
+    "n": 50,
+    "rate": 60.0,
+    "ci95": [
+      46.2,
+      72.4
+    ],
+    "median_err_D": 0.077,
+    "policy_ms_per_query": 0.4
+  },
+  "human_left": {
+    "success": 40,
+    "n": 50,
+    "rate": 80.0,
+    "ci95": [
+      67.0,
+      88.8
+    ],
+    "median_err_D": 0.057,
+    "policy_ms_per_query": 0.4
+  }
+}
