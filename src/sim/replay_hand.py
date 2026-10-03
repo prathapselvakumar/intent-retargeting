@@ -3,8 +3,9 @@
 The pinch point (midpoint of thumb tip and index tip) is expressed relative to the bowl's
 starting position in units of bowl diameters, rotated into the robot frame and scaled to
 the sim bowl. The gripper closes when the human thumb–index aperture closes. A phone
-camera gives no hand height, so the gripper stays at a fixed height that would catch the
-bowl wall. This is the standard "retarget the hand" recipe; it ignores what the bowl does.
+camera gives no hand height, so the gripper stays at a fixed height; we sweep several
+heights and report each, so the baseline isn't judged on one unlucky guess. This is the
+standard "retarget the hand" recipe; it ignores what the bowl does.
 
 The score is how well the SIM bowl reproduces the HUMAN bowl path, in bowl diameters.
 
@@ -23,7 +24,7 @@ from env import CTRL_HZ, BowlEnv, human_to_robot
 PROC_W = 960
 THUMB_TIP, INDEX_TIP = 4, 8
 GRASP_CLOSE_CM, GRASP_OPEN_CM = 4.6, 5.2   # hysteresis on thumb–index aperture
-HOLD_Z = 0.035                              # gripper height above table: inside the bowl wall
+HOLD_ZS = (0.015, 0.03, 0.045)              # gripper heights above the table (bowl is 5.3 cm tall)
 APPROACH_Z = 0.15
 APPROACH_S = 2.0
 SETTLE_S = 1.0
@@ -86,7 +87,7 @@ def human_frames(name, n_out, fps, size):
     return [frames[i] for i in idx]
 
 
-def run(name, out_dir: Path, bowl_xy=(0.0, 0.0)):
+def run(name, out_dir: Path, hold_z, bowl_xy=(0.0, 0.0)):
     H = load_human(name)
     n = int(H["T"] / H["fps"] * CTRL_HZ)
     pinch = resample(H["pinch_rel"], H["fps"], n)
@@ -97,7 +98,7 @@ def run(name, out_dir: Path, bowl_xy=(0.0, 0.0)):
     env.reset(bowl_xy=bowl_xy)
     D = env.bowl_diameter
     b0 = env.bowl_pos()
-    z_hold, z_high = env.table_z + HOLD_Z, env.table_z + APPROACH_Z
+    z_hold, z_high = env.table_z + hold_z, env.table_z + APPROACH_Z
     ee_xy = b0[:2] + human_to_robot(pinch) * D
 
     frames = []
@@ -131,7 +132,7 @@ def run(name, out_dir: Path, bowl_xy=(0.0, 0.0)):
     tgt = human_to_robot(target_bowl)
     err = np.linalg.norm(sim_bowl - tgt, axis=1)
     res = dict(
-        method="hand_motion_replay", video=name, sim_bowl_diameter_cm=round(D * 100, 1),
+        method="hand_motion_replay", video=name, hold_height_cm=round(hold_z * 100, 1), sim_bowl_diameter_cm=round(D * 100, 1),
         target_displacement_D=np.round(tgt[-1], 3).tolist(),
         achieved_displacement_D=np.round(final, 3).tolist(),
         final_error_D=round(float(np.linalg.norm(final - tgt[-1])), 3),
@@ -142,9 +143,10 @@ def run(name, out_dir: Path, bowl_xy=(0.0, 0.0)):
         grip_closed_frac=round(float((grip > 0).mean()), 2),
     )
     out_dir.mkdir(parents=True, exist_ok=True)
-    imageio.mimsave(out_dir / f"{name}_hand_replay.mp4", frames, fps=CTRL_HZ)
-    (out_dir / f"{name}_hand_replay.json").write_text(json.dumps(res, indent=2))
-    np.savez(out_dir / f"{name}_hand_replay.npz", sim_bowl=sim_bowl, target=tgt, ee_xy=ee_xy, grip=grip)
+    tag = f"{name}_hand_replay_z{round(hold_z * 1000)}mm"
+    imageio.mimsave(out_dir / f"{tag}.mp4", frames, fps=CTRL_HZ)
+    (out_dir / f"{tag}.json").write_text(json.dumps(res, indent=2))
+    np.savez(out_dir / f"{tag}.npz", sim_bowl=sim_bowl, target=tgt, ee_xy=ee_xy, grip=grip)
     return res
 
 
@@ -154,4 +156,8 @@ if __name__ == "__main__":
     ap.add_argument("--out", type=Path, default=Path("results/hand_replay"))
     args = ap.parse_args()
     for nm in args.names:
-        print(json.dumps(run(nm, args.out), indent=2))
+        for z in HOLD_ZS:
+            r = run(nm, args.out, z)
+            print(nm, f"z={r['hold_height_cm']}cm", "final_error_D", r["final_error_D"],
+                  "achieved", r["achieved_displacement_D"], "target", r["target_displacement_D"],
+                  "tilt", r["max_tilt_deg"])

@@ -1,0 +1,20 @@
+{
+  "method": "hand_motion_replay",
+  "video": "episode_000_right",
+  "hold_height_cm": 4.5,
+  "sim_bowl_diameter_cm": 11.2,
+  "target_displacement_D": [
+    0.43,
+    0.007
+  ],
+  "achieved_displacement_D": [
+    -0.022,
+    -0.024
+  ],
+  "final_error_D": 0.453,
+  "mean_path_error_D": 0.201,
+  "bowl_moved_during_approach_D": 0.0,
+  "max_tilt_deg": 7.4,
+  "max_lift_cm": 0.3,
+  "grip_closed_frac": 0.23
+}

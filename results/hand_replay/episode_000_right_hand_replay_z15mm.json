@@ -1,19 +1,20 @@
 {
   "method": "hand_motion_replay",
   "video": "episode_000_right",
+  "hold_height_cm": 1.5,
   "sim_bowl_diameter_cm": 11.2,
   "target_displacement_D": [
     0.43,
     0.007
   ],
   "achieved_displacement_D": [
-    -0.423,
-    -0.197
+    -0.258,
+    -0.192
   ],
-  "final_error_D": 0.878,
-  "mean_path_error_D": 0.318,
+  "final_error_D": 0.716,
+  "mean_path_error_D": 0.32,
   "bowl_moved_during_approach_D": 0.002,
-  "max_tilt_deg": 58.1,
-  "max_lift_cm": 3.0,
+  "max_tilt_deg": 46.3,
+  "max_lift_cm": 2.2,
   "grip_closed_frac": 0.23
 }
