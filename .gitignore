@@ -9,3 +9,6 @@ __pycache__/
 *.mp4
 *.r3d
 !results/**/*.mp4
+*.log
+.venv-extract/
+models/
