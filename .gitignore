@@ -12,3 +12,4 @@ __pycache__/
 *.log
 .venv-extract/
 models/
+results/**/*.npz
