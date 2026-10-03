@@ -1,0 +1,11 @@
+.venv/
+third_party/
+data/raw/
+data/processed/
+outputs/
+wandb/
+__pycache__/
+*.pyc
+*.mp4
+*.r3d
+!results/**/*.mp4
