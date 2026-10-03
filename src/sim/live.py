@@ -31,8 +31,9 @@ def soft_reset(env, home_state, home_eef, start):
     """Reset without rebuilding the sim (a LIBERO hard reset would invalidate the viewer).
 
     Restoring MjData alone is not enough: the OSC controller keeps its previous goal, so
-    the arm would drift away from home before the policy starts. Refresh the controller
-    and hold the home pose while the bowl settles."""
+    the arm would drift away from home before the policy starts. Refresh the controller,
+    then settle exactly as BowlEnv.reset does (zero actions), so the policy sees the same
+    start distribution as in training and evaluation."""
     env.set_state(home_state)
     ctrl = env.inner.robots[0].controller
     ctrl.update(force=True)
@@ -43,7 +44,7 @@ def soft_reset(env, home_state, home_eef, start):
     d.qpos[qadr:qadr + 2] = start
     env.sim.forward()
     for _ in range(SETTLE_STEPS):
-        env.step_to(home_eef, -1.0, yaw=0.0)
+        env.step(np.zeros(7))
 
 
 def draw_markers(viewer, env, start, goal):
