@@ -15,3 +15,4 @@ models/
 results/**/*.npz
 data/demos/
 runs/
+data/lerobot/
