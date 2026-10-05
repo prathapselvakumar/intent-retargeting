@@ -16,3 +16,5 @@ results/**/*.npz
 data/demos/
 runs/
 data/lerobot/
+*.mov
+*.MOV
