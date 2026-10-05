@@ -1,0 +1,24 @@
+{
+  "video": "scenario2_plate.mov (IMG_1025)",
+  "duration_s": 9.3,
+  "frames": 281,
+  "bowl_tracked_frames": 281,
+  "min_registration_inliers": 331,
+  "camera_rotation_deg_max": 5.9,
+  "plate_to_bowl_diameter": 1.06,
+  "start_rel_plate_D": [
+    -1.15,
+    -0.11
+  ],
+  "place_time_s": 2.47,
+  "remove_time_s": 7.27,
+  "time_on_plate_s": 4.8,
+  "placement_error_D": 0.006,
+  "mean_offset_on_plate_D": 0.052,
+  "end_rel_plate_D": [
+    -1.11,
+    0.06
+  ],
+  "carry_arc_max_away_D": 0.22,
+  "max_bowl_size_increase_pct": 8.4
+}
