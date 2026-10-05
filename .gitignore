@@ -19,3 +19,5 @@ data/lerobot/
 *.mov
 *.MOV
 ruflo/
+!data/clips/
+!data/clips/*.mp4

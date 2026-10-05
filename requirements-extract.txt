@@ -1,0 +1,5 @@
+# Video-extraction environment (.venv-extract): hand landmarks, bowl/plate tracking, plots.
+mediapipe==1.0.1
+opencv-python-headless==5.0.0
+numpy==2.5.3
+matplotlib==3.11.2

@@ -35,7 +35,7 @@ def run_episode(env, planner, goal_D, prior, seed, render_human=None):
             frames.append(np.hstack([h, *env.render()]))
 
     total_rollouts, first_success = 0, None
-    for k in range(MAX_PRIMS):
+    for _ in range(MAX_PRIMS):
         prim, (c, err_pred, tilt_pred), fs, n = planner.plan(
             env.get_state(), goal, env.bowl_pos()[:2], D, prior=prior, rng=rng,
             log=lambda s: log.append(s))

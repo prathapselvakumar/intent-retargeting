@@ -168,7 +168,7 @@ class Planner:
                      for m, t in zip(modes, th)]
             res = self.pool.map(_rollout, [(state, goal_xy, asdict(p)) for p in prims])
             costs = np.array([r[0] for r in res])
-            for k, (c, err, tilt) in enumerate(res):
+            for k, (_, err, tilt) in enumerate(res):
                 if first_success is None and err < SUCCESS_D and tilt < SUCCESS_TILT:
                     first_success = n_done + k + 1
             n_done += pop

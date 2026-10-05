@@ -154,9 +154,9 @@ def track(video: Path, hands_npz: Path, out_dir: Path):
         scale = np.sqrt(abs(np.linalg.det(H_acc[:2, :2])))
         if bowl:
             b0 = H_acc @ np.r_[bowl[0], bowl[1], 1.0]
-            rows.append((b0[0], b0[1], bowl[2] * scale, inl, rot))   # frame-0 coordinates
+            rows.append((b0[0], b0[1], bowl[2] * scale, inl, rot, *bowl[:3]))   # frame-0 + current
         else:
-            rows.append((np.nan, np.nan, np.nan, inl, rot))
+            rows.append((np.nan, np.nan, np.nan, inl, rot, np.nan, np.nan, np.nan))
         if writer is None:
             out_dir.mkdir(parents=True, exist_ok=True)
             writer = cv2.VideoWriter(str(out_dir / f"{video.stem}_scene.mp4"),
@@ -172,6 +172,7 @@ def track(video: Path, hands_npz: Path, out_dir: Path):
 
     a = np.array(rows, float)
     bowl_c, bowl_r, inl, rot = a[:, 0:2], a[:, 2], a[:, 3], a[:, 4]
+    bowl_cur = a[:, 5:8]                                            # current-frame px (cx, cy, r)
     k = int(fps)
     r_rest = np.nanmedian(np.r_[bowl_r[:k], bowl_r[-k:]])         # bowl on the table
     D = 2 * r_rest                                                  # frame-0 px per bowl diameter
@@ -181,7 +182,7 @@ def track(video: Path, hands_npz: Path, out_dir: Path):
     on_plate = np.linalg.norm(rel, axis=1) < 0.25
     np.savez_compressed(out_dir / f"{video.stem}.npz", bowl_rel_plate_D=rel, bowl_rel_radius=lift,
                         on_plate=on_plate, cam_rot_deg=rot, reg_inliers=inl, fps=fps,
-                        plate_to_bowl_diameter=float(plate0[2] / r_rest))
+                        plate_to_bowl_diameter=float(plate0[2] / r_rest), bowl_cur_px=bowl_cur)
     return out_dir / f"{video.stem}.npz"
 
 
