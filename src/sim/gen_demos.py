@@ -7,6 +7,12 @@ successes. Observations are `BowlEnv.policy_obs`, actions the 20 Hz OSC commands
 
 Usage: python src/sim/gen_demos.py --prior strategy --n 300
        python src/sim/gen_demos.py --prior none --n 300
+       python src/sim/gen_demos.py --prior strategy --noise 0.15 --tag strategy_dart
+
+With --noise, executed actions get Gaussian noise (DART-style) while the recorded labels
+stay the planner's corrective actions, so the policy sees off-nominal states with the
+right correction. Both label (`act`) and executed (`act_exec`) actions are saved; replay
+uses `act_exec`.
 """
 import argparse
 import glob
@@ -16,7 +22,7 @@ from pathlib import Path
 
 import numpy as np
 
-from env import BowlEnv
+from env import BOWL_MASS_KG, BowlEnv
 from planner import SUCCESS_D, SUCCESS_TILT, Planner, execute, human_strategy_prior
 
 MAX_PRIMS = 2
@@ -39,8 +45,11 @@ def run(env, planner, rng, prior, pop, iters):
     goal = goal + (env.bowl_pos()[:2] - start)          # goal relative to settled pose
     obs, acts = [env.policy_obs(goal)], []
 
+    execs = []
+
     def rec():
         acts.append(env.last_action[ACT_IDX].copy())
+        execs.append(env.last_executed[ACT_IDX].copy())
         obs.append(env.policy_obs(goal))
 
     n_roll, prims = 0, []
@@ -57,7 +66,7 @@ def run(env, planner, rng, prior, pop, iters):
     for _ in range(HOLD_STEPS):                          # teach "stop when done"
         env.step_to(env.eef_pos(), env.last_action[6], yaw=env.eef_yaw())
         rec()
-    return ok, dict(obs=np.array(obs[:-1]), act=np.array(acts), start=start, goal=goal,
+    return ok, dict(obs=np.array(obs[:-1]), act=np.array(acts), act_exec=np.array(execs), start=start, goal=goal,
                     err=float(err), prims=prims, rollouts=n_roll)
 
 
@@ -69,13 +78,17 @@ def main():
     ap.add_argument("--pop", type=int, default=32)
     ap.add_argument("--iters", type=int, default=3)
     ap.add_argument("--workers", type=int, default=16)
+    ap.add_argument("--noise", type=float, default=0.0, help="std of executed-action noise")
+    ap.add_argument("--tag", default=None, help="output name (default: the prior)")
     ap.add_argument("--out", type=Path, default=Path("data/demos"))
     args = ap.parse_args()
 
-    prior = human_strategy_prior(sorted(glob.glob("data/processed/intent/*.json"))) \
+    prior = human_strategy_prior(sorted(glob.glob("data/processed/intent/episode_*.json"))) \
         if args.prior == "strategy" else None
     rng = np.random.default_rng(args.seed)
     planner, env = Planner(args.workers), BowlEnv(cam_size=64, cameras=("birdview",))
+    env.set_action_noise(args.noise, seed=args.seed)
+    tag = args.tag or args.prior
     eps, tried, t0 = [], 0, time.time()
     while len(eps) < args.n:
         ok, ep = run(env, planner, rng, prior, args.pop, args.iters)
@@ -83,20 +96,21 @@ def main():
         if ok:
             eps.append(ep)
         if tried % 10 == 0:
-            print(f"[{args.prior}] {len(eps)}/{args.n} kept of {tried} tried "
+            print(f"[{tag}] {len(eps)}/{args.n} kept of {tried} tried "
                   f"({(time.time() - t0) / tried:.1f}s/ep)", flush=True)
     args.out.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(
-        args.out / f"demos_{args.prior}.npz",
+        args.out / f"demos_{tag}.npz",
         obs=np.concatenate([e["obs"] for e in eps]), act=np.concatenate([e["act"] for e in eps]),
+        act_exec=np.concatenate([e["act_exec"] for e in eps]),
         ep_len=np.array([len(e["act"]) for e in eps]),
         start=np.array([e["start"] for e in eps]), goal=np.array([e["goal"] for e in eps]))
-    meta = dict(prior=args.prior, kept=len(eps), tried=tried,
+    meta = dict(prior=args.prior, noise=args.noise, bowl_mass_kg=BOWL_MASS_KG, kept=len(eps), tried=tried,
                 planner_success_rate=round(len(eps) / tried, 3),
                 mean_rollouts=float(np.mean([e["rollouts"] for e in eps])),
                 modes={m: sum(e["prims"][-1] == m for e in eps) for m in ("push", "inside", "pinch")},
                 seconds=round(time.time() - t0))
-    (args.out / f"demos_{args.prior}.json").write_text(json.dumps(meta, indent=2))
+    (args.out / f"demos_{tag}.json").write_text(json.dumps(meta, indent=2))
     print(json.dumps(meta, indent=2))
     env.close()
     planner.close()

@@ -15,6 +15,7 @@ Stepping
   LIBERO's observation and camera pipeline, which the planner doesn't need and which
   would cost ~10× more; call `render()` explicitly when frames are wanted.
 """
+import os
 from pathlib import Path
 
 import numpy as np
@@ -22,7 +23,10 @@ from scipy.spatial.transform import Rotation
 
 BDDL = Path(__file__).parent / "bddl" / "bowl_slide.bddl"
 BOWL = "akita_black_bowl_1"
-BOWL_MASS_KG = 0.25        # LIBERO's default is 6 g; a ceramic bowl is ~250 g
+# Bowl mass override. Default: keep LIBERO's own physics (6 g bowl). The first version of
+# scenario 1 used a realistic 250 g bowl; reproduce it with BOWL_MASS_KG=0.25. An env var,
+# so the planner's spawned worker processes see the same physics as the main process.
+BOWL_MASS_KG = float(os.environ["BOWL_MASS_KG"]) if os.environ.get("BOWL_MASS_KG") else None
 CTRL_HZ = 20
 OSC_STEP_M = 0.05          # OSC output_max: action 1.0 → 5 cm per control step
 OSC_STEP_RAD = 0.5         # … and 0.5 rad per control step
@@ -45,6 +49,7 @@ class BowlEnv:
         self.env = OffScreenRenderEnv(bddl_file_name=str(BDDL), camera_names=list(cameras),
                                       camera_heights=cam_size, camera_widths=cam_size)
         self.cameras = cameras
+        self.action_noise = 0.0
 
     def _bind(self):
         # LIBERO hard-resets rebuild the MjSim, so handles must be refreshed after reset.
@@ -63,9 +68,10 @@ class BowlEnv:
         m, d = self.sim.model, self.sim.data
         # Realistic bowl mass (scale inertia with it).
         main = self.bowl_bodies[0]
-        k = BOWL_MASS_KG / m.body_mass[main]
-        m.body_mass[main] *= k
-        m.body_inertia[main] *= k
+        if BOWL_MASS_KG is not None:
+            k = BOWL_MASS_KG / m.body_mass[main]
+            m.body_mass[main] *= k
+            m.body_inertia[main] *= k
         # Place the bowl through its free joint.
         jid = m.body_jntadr[main]
         qadr = m.jnt_qposadr[jid]
@@ -140,11 +146,25 @@ class BowlEnv:
         a = np.zeros(7)
         a[:3] = np.clip((np.asarray(target) - self.eef_pos()) / OSC_STEP_M * gain, -1, 1)
         if yaw is not None:
+            # Only the yaw component is commanded, so the planner acts in exactly the
+            # 5-D action space the policies output (dx, dy, dz, dyaw, grip) and recorded
+            # demonstrations replay bit-exactly.
             err = Rotation.from_matrix(self.home_rot(yaw) @ self.eef_rot().T).as_rotvec()
-            a[3:6] = np.clip(err / OSC_STEP_RAD, -1, 1)
+            a[5] = np.clip(err[2] / OSC_STEP_RAD, -1, 1)
         a[6] = grip
-        self.last_action = a
-        self.step(a)
+        self.last_action = a                       # the label a policy learns
+        executed = a
+        if self.action_noise:                      # DART-style: perturb what is executed,
+            executed = a.copy()                    # keep the planner's corrective label
+            executed[[0, 1, 2, 5]] = np.clip(
+                a[[0, 1, 2, 5]] + self.noise_rng.normal(0, self.action_noise, 4), -1, 1)
+        self.last_executed = executed
+        self.step(executed)
+
+    def set_action_noise(self, std, seed=0):
+        """Gaussian noise added to executed (not recorded) actions; 0 disables it."""
+        self.action_noise = float(std)
+        self.noise_rng = np.random.default_rng(seed)
 
     def eef_yaw(self):
         x = self.eef_rot()[:, 0]                 # home: site x-axis = world +y

@@ -1,10 +1,10 @@
 """Turn the planner demos into a camera dataset (LeRobot v3 format) for the vision policy.
 
-Each demo is re-executed from its recorded start with its recorded actions while both
-cameras render (goal drawn in). Replays are not bit-exact — the 5-D action leaves out
-the planner's small roll/pitch corrections — so each replay is re-scored and only
-replays that still succeed are kept. The dataset therefore contains exactly the actions
-the vision policy will itself output.
+Each demo is re-executed from its recorded start with its executed actions (`act_exec`)
+while both cameras render (goal drawn in); the frames are labelled with the planner's
+actions (`act`). The planner commands only the 5 action dimensions the policy outputs,
+so replays reproduce the demonstrations; each replay is still re-scored and only
+successful ones are kept.
 
 Usage: python src/vision/render_dataset.py --demos data/demos/demos_strategy.npz \
            --root data/lerobot/bowl_vision_strategy
@@ -55,12 +55,13 @@ def main():
         env.reset(bowl_xy=d["start"][i])
         goal = d["goal"][i]
         frames = []
-        for a5 in d["act"][off[i]:off[i + 1]]:
+        executed = d["act_exec"] if "act_exec" in d.files else d["act"]
+        for a5, x5 in zip(d["act"][off[i]:off[i + 1]], executed[off[i]:off[i + 1]]):
             obs = observe(env, goal)
             frames.append({**obs, "observation.state": state_vec(env),
                            "action": a5.astype(np.float32), "task": TASK})
             a = np.zeros(7)
-            a[[0, 1, 2, 5, 6]] = a5
+            a[[0, 1, 2, 5, 6]] = x5
             env.step(a)
         err = float(np.linalg.norm(env.bowl_pos()[:2] - goal) / env.bowl_diameter)
         errs.append(err)

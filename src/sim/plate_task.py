@@ -44,6 +44,7 @@ class PlateEnv(BowlEnv):
         self.env = OffScreenRenderEnv(bddl_file_name=bddl, camera_names=list(cameras),
                                       camera_heights=cam_size, camera_widths=cam_size)
         self.cameras = cameras
+        self.action_noise = 0.0
 
     def reset(self, init_idx=0, seed=0):
         """Official LIBERO initial state `init_idx` (0–49); LIBERO's default physics."""
