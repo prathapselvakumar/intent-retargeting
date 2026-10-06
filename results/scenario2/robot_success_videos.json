@@ -1,0 +1,26 @@
+[
+  {
+    "init": 0,
+    "success": true,
+    "offset_D": 0.011,
+    "video": "results/scenario2/robot_success_init0.mp4",
+    "theta_deg": 106.6,
+    "lift_cm": 4.9
+  },
+  {
+    "init": 1,
+    "success": true,
+    "offset_D": 0.006,
+    "video": "results/scenario2/robot_success_init1.mp4",
+    "theta_deg": 111.9,
+    "lift_cm": 4.8
+  },
+  {
+    "init": 2,
+    "success": true,
+    "offset_D": 0.022,
+    "video": "results/scenario2/robot_success_init2.mp4",
+    "theta_deg": 107.7,
+    "lift_cm": 3.6
+  }
+]

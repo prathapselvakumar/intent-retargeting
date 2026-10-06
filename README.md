@@ -61,6 +61,10 @@ This uses LIBERO's official scene, its official initial states and its own succe
 | Planner seeded with my grip angle and lift height (initial states 0 to 4) | 5/5 |
 | Planner without my grip strategy (initial states 0 to 4) | 5/5 |
 
+![My clip (left) and the Panda putting the bowl on the plate in LIBERO's official scene](results/figures/scenario2_success.gif)
+
+Videos for initial states 0, 1 and 2: [`results/scenario2/robot_success_init*.mp4`](results/scenario2).
+
 Both planners succeeded every time. The seeded planner gripped between 107° and 147° and lifted 3.6 to 5.8 cm; without my strategy the grips ranged from 15° to 166° and the lifts from 5.6 to 10.1 cm.
 
 ### Bowl world model
@@ -105,6 +109,7 @@ On this machine, video extraction takes seconds, generating 300 demonstrations t
 | [`src/sim/planner.py`](src/sim/planner.py), [`src/sim/plate_task.py`](src/sim/plate_task.py) | primitives and CEM planners for scenarios 1 and 2 |
 | [`src/sim/replay_hand.py`](src/sim/replay_hand.py), [`src/sim/replay_hand_plate.py`](src/sim/replay_hand_plate.py) | hand-motion replay baselines |
 | [`src/sim/gen_demos.py`](src/sim/gen_demos.py) | planner to demonstrations |
+| [`src/sim/render_plate_success.py`](src/sim/render_plate_success.py) | scenario-2 success videos |
 | [`src/policy/`](src/policy) | MLP policy training and evaluation |
 | [`src/vision/`](src/vision) | camera dataset in LeRobot format, SmolVLA evaluation |
 | [`src/worldmodel/`](src/worldmodel) | random-interaction data and the bowl world model |
