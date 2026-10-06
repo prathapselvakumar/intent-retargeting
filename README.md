@@ -1,143 +1,138 @@
-# Copy the Bowl, Not the Hand
+# Intent retargeting: from my phone videos to a Panda in LIBERO
 
-**From two iPhone clips of my own hands to a robot policy in LIBERO, by imitating what happened to the object instead of how my hand moved.**
+I filmed my own hands moving a bowl with an iPhone, then used those clips to drive a Franka Panda in the LIBERO simulator [2]. The robot reproduces the bowl's motion as measured in the video, and it takes one detail from my technique: where on the rim I gripped.
 
-![My clip (left) and the Panda reproducing its effect in LIBERO (front and top views)](results/figures/hero_left_clip_vs_robot.gif)
+![My clip (left) and the Panda reproducing its effect, front and top views](results/figures/hero_left_clip_vs_robot.gif)
 
-The standard way to use human video is to retarget the hand's trajectory onto the robot. On my data that fails completely: the Panda's gripper is not a hand, my phone gives no hand height, and a motion that slides a bowl for me tips it over or pushes it the wrong way for the robot (**0 / 50** successes).
+## Main result
 
-This project uses my video for two other things:
+Replaying my hand motion on the robot never succeeds (0 of 50 tasks). A policy trained on demonstrations that the planner found by reproducing the bowl's motion succeeds on 87.6% of held-out tasks when the planner is seeded with my grip strategy, and on 63.6% without it (mean over 3 training seeds, 150 tasks each). SmolVLA fine-tuned on the same demonstrations, seeing only camera images, reaches 68.0%.
 
-1. **The goal**: the bowl's own trajectory (where it went, whether it was lifted), measured from the video.
-2. **The strategy**: *where* on the rim my hand gripped the bowl, relative to the direction it moved.
+![Success rates for scenario 1](results/figures/scenario1_success.png)
 
-The robot then searches for its own way to reproduce that effect, and the successful searches are distilled into a fast closed-loop policy. The human strategy is not decoration. **Policies trained on demos guided by it succeed 87.6% of the time, versus 63.6% without it** (3 training seeds, 450 held-out episodes each).
+## Data
 
-![Scenario 1 results](results/figures/scenario1_success.png)
+I recorded three clips on an iPhone 15 Plus (4K, 30 fps, no LiDAR). Downscaled copies without audio are in [`data/clips/`](data/clips).
 
----
-
-## Contents
-- [The data I collected](#the-data-i-collected)
-- [Method](#method)
-- [Results](#results)
-- [Reproducing](#reproducing)
-- [Repository layout](#repository-layout)
-- [Limitations and honest notes](#limitations-and-honest-notes)
-
-## The data I collected
-
-All recordings were made on an **iPhone 15 Plus** (no LiDAR), top-down over a kitchen table, 4K at 30 fps. Downscaled, silent copies are in [`data/clips/`](data/clips).
-
-| Clip | What happens | Camera |
+| Clip | Content | Camera |
 |---|---|---|
-| [`scenario1_right_hand.mp4`](data/clips/scenario1_right_hand.mp4) | right hand slides a black bowl 0.43 bowl-diameters away | fixed |
-| [`scenario1_left_hand.mp4`](data/clips/scenario1_left_hand.mp4) | left hand slides it back 0.41 bowl-diameters | fixed |
-| [`scenario2_bowl_onto_plate.mp4`](data/clips/scenario2_bowl_onto_plate.mp4) | left hand lifts the bowl onto a plate, then takes it off again | **hand-held** (drifts, rotates up to 6°) |
+| [`scenario1_right_hand.mp4`](data/clips/scenario1_right_hand.mp4) | right hand slides a black bowl away from me | fixed, top-down |
+| [`scenario1_left_hand.mp4`](data/clips/scenario1_left_hand.mp4) | left hand slides it back | fixed, top-down |
+| [`scenario2_bowl_onto_plate.mp4`](data/clips/scenario2_bowl_onto_plate.mp4) | left hand lifts the bowl onto a plate, then off again | hand-held |
 
-Scenario 2 is the real-world version of LIBERO's own task `libero_goal` #8, *"put the bowl on the plate"*.
+Scenario 2 is the same task as LIBERO `libero_goal` task 8, "put the bowl on the plate".
 
 ## Method
 
-```
-iPhone video ─┬─► hand landmarks (MediaPipe)          ──► baseline: replay the hand motion
-              │
-              └─► object track, no depth sensor:
-                    bowl = dark-blob circle fit, plate = bright-blob circle fit
-                    metric scale from the bowl's own size; lift from its apparent growth
-                    hand-held camera: ORB + RANSAC registration, plate as fixed reference
-                          │
-                          ▼
-              INTENT  =  goal (bowl displacement / bowl-on-plate)
-                       + strategy (grip angle on the rim, relative to motion; lift height)
-                          │
-                          ▼
-              CEM planner over manipulation primitives in LIBERO (push / pinch-drag / pick-place),
-              human strategy as the search prior, parallel MuJoCo rollouts
-                          │
-                          ▼
-              300 verified demos  ──►  policy (state MLP with action chunking, 0.7 ms per step)
-                                  ──►  vision policy (SmolVLA fine-tuned from cameras only)
-```
-
-**Why the strategy transfers.** In both scenario-1 clips my hand gripped the rim about 100° clockwise from the direction the bowl moved (−115° and −84°), on opposite sides of the bowl and with opposite hands. Expressed relative to the motion, the same strategy applies to any start position and goal. The planner starts its search there, so its demos consistently use one strategy (pinch the rim: 278/300) instead of a mix (199 pinch, 91 inside-drag, 10 push without the prior). A regression policy cannot average three different strategies into a working one, so the consistent data distils far better.
-
-Units throughout are **bowl diameters (D)**. This removes the unknown real bowl size and lets a human motion map onto LIBERO's 11.2 cm bowl.
+1. Bowl tracking. The bowl is a dark disc on a light table, so a brightness threshold and a robust circle fit find it in every frame (360/360 in scenario 1, 281/281 in scenario 2). Positions are expressed in bowl diameters (D), which removes the need for a depth sensor or a known bowl size. Lift shows up as growth in the bowl's apparent size. For the hand-held clip, camera motion is estimated from the background (ORB features, RANSAC) and the bowl is measured relative to the plate, which never moves.
+2. Grip strategy. MediaPipe Hands [7] gives fingertip positions, and contact with the rim gives a grip angle. In both scenario-1 clips I gripped the rim about 100° clockwise of the direction the bowl moved (−115° and −84°), even though I used different hands and moved in opposite directions. In scenario 2 I gripped the same near-left part of the rim (−162° and −151°) in both directions.
+3. Planning. A cross-entropy-method planner searches over short manipulation primitives (push, pinch-and-drag, drag from inside the bowl, pick-and-place) with parallel MuJoCo rollouts, scoring each by where the bowl ends up. The grip strategy from step 2 sets the initial search distribution. This is a simplified form of the demonstration-generation idea in MimicGen [1].
+4. Distillation. The planner's successful episodes become demonstrations for a 4-layer MLP that predicts 8-step action chunks from the bowl-relative state, and for SmolVLA [3] fine-tuned from camera images, the robot's own state and the instruction "slide the black bowl onto the green target". The goal is drawn into the images as a green disc.
+5. World model. An MLP ensemble predicts the bowl's next motion from the pinch point's position and motion relative to the bowl. It is trained on simulated robot interactions only, then given my real hand trajectory to see whether it predicts where my real bowl went.
 
 ## Results
 
-### Scenario 1: slide the bowl (custom LIBERO scene: table, Panda, LIBERO's black bowl)
+All success rates use the same criterion: the bowl ends within 0.1 D (about 1.1 cm) of the goal and upright. Numbers come from the JSON files in [`results/`](results).
 
-| Method | Uses from my video | Success, held-out tasks |
+### Scenario 1: slide the bowl
+
+This uses a custom LIBERO scene with a table, the Panda and LIBERO's black bowl (11.2 cm).
+
+| Method | What it uses from my video | Success |
 |---|---|---|
-| Replay my hand motion (best of 3 gripper heights) | hand trajectory + grip | **0 / 50** |
-| Intent planner, no human prior | goal | 40 / 40 (≈ 9 s of search per episode) |
-| Intent planner, human prior | goal + strategy | 40 / 40, always the human-like pinch |
-| Policy distilled from no-prior demos | goal | **63.6% ± 0.3** (3 seeds × 150) |
-| **Policy distilled from human-prior demos** | **goal + strategy** | **87.6% ± 1.4** (3 seeds × 150) |
+| Replay my pinch-point trajectory, best of 3 gripper heights | hand motion and grip timing | 0/50 |
+| Planner without my grip strategy (10 seeds × 2 clip goals) | goal | 20/20 |
+| Planner seeded with my grip strategy (10 seeds × 2 clip goals) | goal and grip | 20/20 |
+| MLP policy, demos from the planner without my strategy | goal | 63.6% (3 seeds × 150) |
+| MLP policy, demos from the seeded planner | goal and grip | 87.6% (3 seeds × 150) |
+| SmolVLA from cameras, demos from the seeded planner | goal and grip | 68.0% (150; 95% CI 60.2 to 74.9) |
 
-Per test set (pooled over seeds): random goals 79% vs 58%, right-clip goal 87% vs 67%, left-clip goal 96% vs 65%. The 95% Wilson intervals of the two pooled rates (80–91% vs 56–71%) do not overlap. A live run in the interactive viewer reproduced the gap independently (**100/113 vs 56/81**).
+The planner solves the task with or without my grip strategy. The difference is in the demonstrations it produces: seeded with my strategy, it chose the rim pinch in 278 of 300 episodes, while without it the 300 episodes mixed rim pinches (199), drags from inside the bowl (91) and pushes (10). An MLP trained to regress actions averages across those strategies and fails more often, which accounts for the gap between 63.6% and 87.6%. The gap holds on every test set and every training seed (per seed: 129, 131, 134 vs 96, 95, 95 out of 150).
 
-The success criterion is that the bowl ends within 0.1 D (about 1.1 cm) of the goal and upright. The policy runs at 0.7 ms per query, about 10,000× faster than planning.
+The MLP needs 0.7 ms per query. SmolVLA needs about 115 ms per query and returns 10 actions, about 14 ms per control step.
 
-### Scenario 2: put the bowl on the plate (LIBERO's official scene and success check)
+### Scenario 2: bowl onto the plate
 
-![Scenario 2 extraction](results/scenario2/summary.png)
+This uses LIBERO's official scene, its official initial states and its own success check. In my video the plate is 1.06 bowl diameters wide, the bowl came within 0.006 D of the plate centre, and I lifted it by an estimated 4 cm.
 
-From the hand-held clip, with camera drift removed: the bowl is lifted (it appears about 8.5% larger at the top of the carry), carried in an arc, and set down **0.006 D** from the plate centre. It sits there for 4.8 s and is then removed the same way. My hand gripped the **same near-left rim** in both directions, so here the strategy depends on where the hand comes from, not on the motion direction.
-
-| Method | Success on LIBERO's official initial states |
+| Method | Success |
 |---|---|
-| Replay my hand motion (fitted onto LIBERO's bowl and plate, lift from video, 3 heights × 10 starts) | **0 / 30** |
-| One pick-place using my grip angle (114°) and lift (≈4 cm) directly, no search | ✓ first try (init state 0) |
-| Same pick-place with a naive grip on the side facing the robot (180°) | ✗ misses the bowl |
-| Intent planner with / without my grip prior | *in progress* |
+| Replay my pinch-point trajectory, fitted onto LIBERO's bowl and plate (10 initial states × 3 heights) | 0/30 |
+| Planner seeded with my grip angle and lift height (initial states 0 to 4) | 5/5 |
+| Planner without my grip strategy (initial states 0 to 4) | 5/5 |
 
-### Vision policy (in progress)
+Both planners succeeded every time. The seeded planner gripped between 107° and 147° and lifted 3.6 to 5.8 cm; without my strategy the grips ranged from 15° to 166° and the lifts from 5.6 to 10.1 cm.
 
-SmolVLA (`lerobot/smolvla_base`, 450M parameters) is fine-tuned on the scenario-1 demos rendered as **camera images only**, with no simulator object state. The goal is drawn into the images as a green target disc. Dataset: 221 episodes in LeRobot v3 format. Training: 15k steps on an RTX 4090 Laptop GPU, about 3 h. Evaluation uses the same held-out tasks as the state policy ([`src/vision/eval_vla.py`](src/vision/eval_vla.py)).
+### Bowl world model
 
-## Reproducing
+Final position error after rolling the model forward over a whole episode, given only the pinch-point trajectory:
 
-Tested on Ubuntu 24.04, Python 3.12, NVIDIA RTX 4090 Laptop GPU (16 GB). LIBERO and headless EGL rendering need **Linux**; on Windows use WSL2.
+| | Demos only (34k steps) | Demos + 3,000 random interactions (159k steps) |
+|---|---|---|
+| Held-out robot episodes, learned model | 0.063 D | 0.068 D |
+| Held-out robot episodes, "bowl follows the closed gripper" rule | 0.165 D | 0.167 D |
+| My right-hand clip | 2.87 D | 0.48 D |
+| My left-hand clip | 0.40 D | 0.46 D |
+| My clips, "bowl does not move" | 0.43 D, 0.41 D | same |
+| Ensemble disagreement, my hand / robot | 6.6× | 4.5× |
+
+The model predicts robot interactions well. It does not predict my real bowl better than assuming the bowl stays still. Training on random interactions removed the worst failure (one ensemble member drifted 9.4 D on the right-hand clip), but a model learned from a parallel gripper does not transfer to a human hand without human training data. The ensemble members disagree 4.5 to 6.6 times more on my hand input than on robot input, so the disagreement can at least flag when the model is outside its training data.
+
+## Running it
+
+Tested on Ubuntu 24.04, Python 3.12, an RTX 4090 Laptop GPU (16 GB) and 20 CPU cores. LIBERO and headless EGL rendering need Linux.
 
 ```bash
-./scripts/setup.sh            # two venvs: .venv (LeRobot + LIBERO + SmolVLA), .venv-extract (MediaPipe)
-./scripts/run_scenario1.sh    # extraction → baseline → planner → demos → policies → eval → SmolVLA
-./scripts/run_scenario2.sh    # extraction → hand-replay baseline in libero_goal #8
-.venv-extract/bin/python src/report/figures.py   # regenerate the README figure
+./scripts/setup.sh            # .venv: LeRobot, LIBERO, SmolVLA. .venv-extract: MediaPipe, OpenCV
+./scripts/run_scenario1.sh    # extraction, baseline, planner, demos, policies, SmolVLA, evaluation
+./scripts/run_scenario2.sh    # extraction and hand-replay baseline in libero_goal task 8
 ```
 
-The pipelines expect the original clips in `data/raw/` (not committed, 4K, about 120 MB). Watch the policy live:
+The scripts expect the original clips in `data/raw/` (not committed, 117 MB). To watch the policy in an interactive MuJoCo window:
 
 ```bash
-MUJOCO_GL=egl PYTHONPATH=src/sim .venv/bin/python src/sim/live.py            # with human strategy
-MUJOCO_GL=egl PYTHONPATH=src/sim .venv/bin/python src/sim/live.py --policy runs/policy_none
+MUJOCO_GL=egl PYTHONPATH=src/sim .venv/bin/python src/sim/live.py
 ```
 
-## Repository layout
+On this machine, video extraction takes seconds, generating 300 demonstrations takes about 30 minutes on 16 CPU cores, MLP training takes about a minute, and SmolVLA fine-tuning (15,000 steps, batch 32) took about 2 h 45 min.
 
-| Path | What it does |
+## Code
+
+| Path | Purpose |
 |---|---|
-| [`src/extract/hands.py`](src/extract/hands.py) | MediaPipe hand landmarks per frame (2D + metric hand-centric 3D) |
-| [`src/extract/bowl.py`](src/extract/bowl.py) | metric bowl track from a fixed top-down camera, lift from apparent size |
-| [`src/extract/contact.py`](src/extract/contact.py) | contact segments, rim angle, push / drag / pull classification |
-| [`src/extract/scene_plate.py`](src/extract/scene_plate.py) | hand-held camera registration, bowl relative to plate |
-| [`src/sim/env.py`](src/sim/env.py) | LIBERO scene wrapper: fast physics stepping, OSC control, state |
-| [`src/sim/replay_hand.py`](src/sim/replay_hand.py), [`src/sim/replay_hand_plate.py`](src/sim/replay_hand_plate.py) | the hand-motion baselines |
-| [`src/sim/planner.py`](src/sim/planner.py), [`src/sim/run_planner.py`](src/sim/run_planner.py) | slide primitives, CEM planner, human strategy prior |
-| [`src/sim/plate_task.py`](src/sim/plate_task.py) | scenario 2 in `libero_goal` #8: pick-place primitive and planner |
-| [`src/sim/gen_demos.py`](src/sim/gen_demos.py) | planner → verified demonstrations |
-| [`src/policy/`](src/policy) | chunked-MLP policy training and closed-loop evaluation |
-| [`src/vision/`](src/vision) | goal-overlay camera dataset, SmolVLA evaluation |
-| [`src/sim/live.py`](src/sim/live.py) | interactive MuJoCo viewer |
-| [`results/`](results) | metrics (JSON), figures, evaluation videos |
+| [`src/extract/`](src/extract) | hand landmarks, bowl and plate tracking, contact and grip angle |
+| [`src/sim/env.py`](src/sim/env.py) | LIBERO wrapper: physics stepping, end-effector control, state |
+| [`src/sim/planner.py`](src/sim/planner.py), [`src/sim/plate_task.py`](src/sim/plate_task.py) | primitives and CEM planners for scenarios 1 and 2 |
+| [`src/sim/replay_hand.py`](src/sim/replay_hand.py), [`src/sim/replay_hand_plate.py`](src/sim/replay_hand_plate.py) | hand-motion replay baselines |
+| [`src/sim/gen_demos.py`](src/sim/gen_demos.py) | planner to demonstrations |
+| [`src/policy/`](src/policy) | MLP policy training and evaluation |
+| [`src/vision/`](src/vision) | camera dataset in LeRobot format, SmolVLA evaluation |
+| [`src/worldmodel/`](src/worldmodel) | random-interaction data and the bowl world model |
+| [`src/report/figures.py`](src/report/figures.py) | the results figure |
 
-## Limitations and honest notes
+## Limitations
 
-- **Few clips.** Scenario 1 is two demonstrations and scenario 2 is one. The strategy prior is estimated from two grip angles, which is why it carries a ±15° spread.
-- **The state policy reads ground-truth object positions** from the simulator. The SmolVLA run exists to remove that.
-- **The planner doesn't need the human prior to succeed** in scenario 1. Its value shows up in which strategy the planner picks and in how well that data distils into a policy, not in planner success.
-- **Fragility.** The same task can succeed or fail after tiny physics differences, so success rates are reported only over many episodes and seeds.
-- **Lift heights are approximate.** They come from apparent size on a single camera, and in scenario 2 slow camera zoom also changes the apparent size by about 4%.
-- **Physics.** In scenario 1 the bowl mass was raised from LIBERO's 6 g to a realistic 250 g. Scenario 2 keeps LIBERO's default physics so its success check is the benchmark's own.
+- There are only three clips, and the scenario-1 grip strategy comes from two grip angles.
+- The MLP policy reads the bowl position from the simulator. SmolVLA does not, and scores lower (68.0% vs 87.6%).
+- SmolVLA was trained and evaluated once, so its result has no seed spread.
+- Outcomes are sensitive to small physics differences: the same task can succeed or fail after a tiny change in the initial state. Rates are only reported over many tasks.
+- Lift heights come from apparent size in a single camera. In scenario 2, slow changes in camera distance also change the apparent size by a few percent.
+- In scenario 1 I raised the bowl's mass from LIBERO's 6 g to 250 g. Scenario 2 keeps LIBERO's default physics so that its success check is the benchmark's own.
+
+## Related work
+
+ATM [4], Track2Act [5] and Im2Flow2Act [6] also learn from object or point motion in human video instead of hand poses. They predict tracks or flow with models trained on large video datasets. This project measures a single bowl directly from three clips and uses the human contribution as a goal and a search prior. MimicGen [1] generates many robot demonstrations from a few human ones by replaying object-relative segments; the planner here does something similar with a search step instead of segment replay.
+
+## AI assistance
+
+I used an AI coding assistant (Claude) to write and debug code and to draft this README. I recorded the data and directed the experiments, and every number above is produced by the code in this repository.
+
+## References
+
+1. Mandlekar, A., Nasiriany, S., Wen, B., Akinola, I., Narang, Y., Fan, L., Zhu, Y., & Fox, D. (2023). MimicGen: A data generation system for scalable robot learning using human demonstrations. *CoRL 2023*. [arXiv:2310.17596](https://arxiv.org/abs/2310.17596)
+2. Liu, B., Zhu, Y., Gao, C., Feng, Y., Liu, Q., Zhu, Y., & Stone, P. (2023). LIBERO: Benchmarking knowledge transfer for lifelong robot learning. *NeurIPS 2023 Datasets and Benchmarks*. [arXiv:2306.03310](https://arxiv.org/abs/2306.03310)
+3. Shukor, M., et al. (2025). SmolVLA: A vision-language-action model for affordable and efficient robotics. [arXiv:2506.01844](https://arxiv.org/abs/2506.01844)
+4. Wen, C., Lin, X., So, J., Chen, K., Dou, Q., Gao, Y., & Abbeel, P. (2024). Any-point trajectory modeling for policy learning. *RSS 2024*. [arXiv:2401.00025](https://arxiv.org/abs/2401.00025)
+5. Bharadhwaj, H., et al. (2024). Track2Act: Predicting point tracks from internet videos enables generalizable robot manipulation. *ECCV 2024*. [arXiv:2405.01527](https://arxiv.org/abs/2405.01527)
+6. Xu, M., et al. (2024). Flow as the cross-domain manipulation interface (Im2Flow2Act). *CoRL 2024*. [arXiv:2407.15208](https://arxiv.org/abs/2407.15208)
+7. Zhang, F., et al. (2020). MediaPipe Hands: On-device real-time hand tracking. *CVPR Workshop on Computer Vision for AR/VR*. [arXiv:2006.10214](https://arxiv.org/abs/2006.10214)
