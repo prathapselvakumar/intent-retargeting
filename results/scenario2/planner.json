@@ -1,0 +1,122 @@
+[
+  {
+    "init": 0,
+    "condition": "human",
+    "planned_success": true,
+    "first_success_at": 2,
+    "rollouts": 90,
+    "executed_success": true,
+    "offset_D": 0.011,
+    "theta_deg": 106.6,
+    "lift_cm": 4.9,
+    "seconds": 42
+  },
+  {
+    "init": 0,
+    "condition": "none",
+    "planned_success": true,
+    "first_success_at": 1,
+    "rollouts": 90,
+    "executed_success": true,
+    "offset_D": 0.017,
+    "theta_deg": 91.7,
+    "lift_cm": 8.5,
+    "seconds": 34
+  },
+  {
+    "init": 1,
+    "condition": "human",
+    "planned_success": true,
+    "first_success_at": 2,
+    "rollouts": 90,
+    "executed_success": true,
+    "offset_D": 0.006,
+    "theta_deg": 111.9,
+    "lift_cm": 4.8,
+    "seconds": 39
+  },
+  {
+    "init": 1,
+    "condition": "none",
+    "planned_success": true,
+    "first_success_at": 1,
+    "rollouts": 90,
+    "executed_success": true,
+    "offset_D": 0.024,
+    "theta_deg": 14.7,
+    "lift_cm": 6.0,
+    "seconds": 35
+  },
+  {
+    "init": 2,
+    "condition": "human",
+    "planned_success": true,
+    "first_success_at": 1,
+    "rollouts": 90,
+    "executed_success": true,
+    "offset_D": 0.022,
+    "theta_deg": 107.7,
+    "lift_cm": 3.6,
+    "seconds": 38
+  },
+  {
+    "init": 2,
+    "condition": "none",
+    "planned_success": true,
+    "first_success_at": 5,
+    "rollouts": 90,
+    "executed_success": true,
+    "offset_D": 0.024,
+    "theta_deg": 130.5,
+    "lift_cm": 5.6,
+    "seconds": 35
+  },
+  {
+    "init": 3,
+    "condition": "human",
+    "planned_success": true,
+    "first_success_at": 5,
+    "rollouts": 90,
+    "executed_success": true,
+    "offset_D": 0.055,
+    "theta_deg": 146.5,
+    "lift_cm": 5.8,
+    "seconds": 37
+  },
+  {
+    "init": 3,
+    "condition": "none",
+    "planned_success": true,
+    "first_success_at": 4,
+    "rollouts": 90,
+    "executed_success": true,
+    "offset_D": 0.02,
+    "theta_deg": 75.0,
+    "lift_cm": 6.8,
+    "seconds": 34
+  },
+  {
+    "init": 4,
+    "condition": "human",
+    "planned_success": true,
+    "first_success_at": 2,
+    "rollouts": 90,
+    "executed_success": true,
+    "offset_D": 0.028,
+    "theta_deg": 123.2,
+    "lift_cm": 4.8,
+    "seconds": 36
+  },
+  {
+    "init": 4,
+    "condition": "none",
+    "planned_success": true,
+    "first_success_at": 3,
+    "rollouts": 90,
+    "executed_success": true,
+    "offset_D": 0.023,
+    "theta_deg": 165.6,
+    "lift_cm": 10.1,
+    "seconds": 35
+  }
+]

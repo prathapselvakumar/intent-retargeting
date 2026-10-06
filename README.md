@@ -132,7 +132,6 @@ MUJOCO_GL=egl PYTHONPATH=src/sim .venv/bin/python src/sim/live.py --policy runs/
 | [`src/vision/`](src/vision) | goal-overlay camera dataset, SmolVLA evaluation |
 | [`src/sim/live.py`](src/sim/live.py) | interactive MuJoCo viewer |
 | [`results/`](results) | metrics (JSON), figures, evaluation videos |
-| [`RECORDING.md`](RECORDING.md) | the recording protocol I followed |
 
 ## Limitations and honest notes
 
