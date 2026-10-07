@@ -151,8 +151,101 @@ def scenario2(scene=Path("data/processed/scene/scenario2_plate.npz"),
     return out_dir / "summary.png"
 
 
+def scenario2_results(out=Path("results/figures/scenario2_results.png"), human_grip_deg=113.7,
+                      human_lift_cm=0.36 * 11.2, human_offset_D=0.006):
+    """Scenario 2 in libero_goal task 8: success, and what the planner chose with and without
+    my grip prior. Human reference values: grip angle and lift from the plate video (lift
+    0.36 bowl diameters x LIBERO's 11.2 cm bowl), placement offset from the video."""
+    plan = json.loads(Path("results/scenario2/planner.json").read_text())
+    replay = json.loads(Path("results/scenario2/hand_replay.json").read_text())
+    groups = [("Replay of my hand motion", BLUE, None),
+              ("Planner without my grip strategy", ORANGE, "none"),
+              ("Planner seeded with my grip strategy", AQUA, "human")]
+    runs = {c: [r for r in plan if r["condition"] == c] for c in ("none", "human")}
+    rng = np.random.default_rng(0)
+    plt.rcParams.update({"font.size": 10.5, "axes.labelcolor": INK2, "xtick.color": INK2,
+                         "ytick.color": INK2, "text.color": INK})
+    fig, axes = plt.subplots(1, 4, figsize=(17, 4.6), facecolor=SURF,
+                             gridspec_kw=dict(width_ratios=[1.1, 1.3, 1, 1.3]))
+    for ax in axes:
+        ax.set_facecolor(SURF)
+        for side in ("top", "right"):
+            ax.spines[side].set_visible(False)
+        ax.spines["left"].set_color(INK2)
+        ax.spines["bottom"].set_color(INK2)
+
+    # A: success with Wilson intervals
+    ax = axes[0]
+    counts = [(sum(r["success"] for r in replay), len(replay))] + \
+             [(sum(r["executed_success"] for r in runs[c]), len(runs[c])) for c in ("none", "human")]
+    for i, ((name, col, _), (k, n)) in enumerate(zip(groups, counts)):
+        lo, hi = wilson(k, n)
+        ax.bar(i, 100 * k / n, 0.62, color=col, edgecolor=SURF, linewidth=2, zorder=3)
+        ax.errorbar(i, 100 * k / n, yerr=[[100 * k / n - 100 * lo], [100 * hi - 100 * k / n]], fmt="none",
+                    ecolor=INK2, elinewidth=1.2, capsize=3, zorder=4)
+        ax.text(i, 100 * hi + 2, f"{k}/{n}", ha="center", va="bottom", fontsize=10)
+    ax.set_xticks(range(3), ["hand\nreplay", "planner,\nno prior", "planner,\nmy prior"])
+    ax.set_ylim(0, 115)
+    ax.set_yticks(range(0, 101, 25))
+    ax.set_ylabel("LIBERO success (%)")
+    ax.yaxis.grid(True, color=GRID, lw=0.8, zorder=0)
+    ax.set_title("A. Success (95% Wilson)", loc="left", fontsize=11)
+
+    # B: grip angle around the rim
+    ax = axes[1]
+    for row, c, col in ((1, "none", ORANGE), (0, "human", AQUA)):
+        th = [r["theta_deg"] % 360 for r in runs[c]]
+        ax.scatter(th, row + rng.uniform(-0.08, 0.08, len(th)), s=70, color=col, edgecolor=SURF, lw=1.5, zorder=3)
+    ax.axvline(human_grip_deg, color=INK, ls="--", lw=1.2)
+    ax.text(human_grip_deg + 4, 1.42, f"my grip ({human_grip_deg:.0f}°)", fontsize=9, color=INK)
+    ax.set_xlim(0, 360)
+    ax.set_xticks(range(0, 361, 90))
+    ax.set_ylim(-0.5, 1.6)
+    ax.set_yticks([0, 1], ["my prior", "no prior"])
+    ax.set_xlabel("grip angle on the rim (degrees, robot frame)")
+    ax.xaxis.grid(True, color=GRID, lw=0.8, zorder=0)
+    ax.set_title("B. Where the robot grips", loc="left", fontsize=11)
+
+    # C: lift height
+    ax = axes[2]
+    for row, c, col in ((1, "none", ORANGE), (0, "human", AQUA)):
+        lift = [r["lift_cm"] for r in runs[c]]
+        ax.scatter(lift, row + rng.uniform(-0.08, 0.08, len(lift)), s=70, color=col, edgecolor=SURF, lw=1.5, zorder=3)
+    ax.axvline(human_lift_cm, color=INK, ls="--", lw=1.2)
+    ax.text(human_lift_cm + 0.15, 1.42, f"my lift (~{human_lift_cm:.0f} cm)", fontsize=9, color=INK)
+    ax.set_xlim(0, 12.5)
+    ax.set_ylim(-0.5, 1.6)
+    ax.set_yticks([0, 1], ["my prior", "no prior"])
+    ax.set_xlabel("lift height (cm)")
+    ax.xaxis.grid(True, color=GRID, lw=0.8, zorder=0)
+    ax.set_title("C. How high it lifts", loc="left", fontsize=11)
+
+    # D: where the bowl ends up relative to the plate centre
+    ax = axes[3]
+    vals = [[r["offset_D"] for r in replay]] + [[r["offset_D"] for r in runs[c]] for c in ("none", "human")]
+    for i, ((_, col, _), v) in enumerate(zip(groups, vals)):
+        ax.scatter(i + rng.uniform(-0.12, 0.12, len(v)), v, s=45, color=col, edgecolor=SURF, lw=1.2, zorder=3)
+        ax.text(i, max(v) * 1.5, f"median {np.median(v):.3f}", ha="center", fontsize=9)
+    ax.axhline(human_offset_D, color=INK, ls="--", lw=1.2)
+    ax.text(2.45, human_offset_D * 1.15, "my placement", ha="right", fontsize=9, color=INK)
+    ax.set_yscale("log")
+    ax.set_ylim(0.003, 6)
+    ax.set_xticks(range(3), ["hand\nreplay", "planner,\nno prior", "planner,\nmy prior"])
+    ax.set_ylabel("final distance to plate centre (bowl diameters)")
+    ax.yaxis.grid(True, color=GRID, lw=0.8, which="major", zorder=0)
+    ax.set_title("D. Where the bowl lands", loc="left", fontsize=11)
+
+    fig.suptitle("Scenario 2, bowl onto the plate, in LIBERO libero_goal task 8 (official scene, initial states 0 to 4; "
+                 "hand replay: 10 initial states x 3 gripper heights)", x=0.01, ha="left", fontsize=12)
+    plt.tight_layout(rect=(0, 0, 1, 0.93))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(out, dpi=150, facecolor=SURF)
+    return out
+
+
 if __name__ == "__main__":
     import sys
     print(scenario1())
+    print(scenario2_results())
     if "--scenario2" in sys.argv:
         print(scenario2())

@@ -72,7 +72,9 @@ This uses LIBERO's official scene, its official initial states and its own succe
 
 Videos for initial states 0, 1 and 2: [`results/scenario2/robot_success_init*.mp4`](results/scenario2).
 
-Both planners succeeded every time. The seeded planner gripped between 104° and 160° (four of five runs within 104° to 114°) and lifted 4.5 to 5.7 cm; without my strategy the grips ranged from 52° to 164° and the lifts from 5.6 to 11.3 cm.
+![Scenario 2 results: success, grip angle, lift height and placement](results/figures/scenario2_results.png)
+
+Both planners succeeded every time. The seeded planner gripped between 104° and 160° (four of five runs within 104° to 114°) and lifted 4.5 to 5.7 cm; without my strategy the grips ranged from 52° to 164° and the lifts from 5.6 to 11.3 cm. Placement precision is similar for both (median 0.014 D seeded, 0.009 D without the prior), and with five initial states per planner the success intervals are wide (57% to 100%).
 
 ### Bowl world model
 
