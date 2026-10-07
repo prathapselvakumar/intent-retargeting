@@ -1,0 +1,23 @@
+{
+  "method": "hand_replay",
+  "human_right": {
+    "success": 0,
+    "n": 25,
+    "rate": 0.0,
+    "ci95": [
+      0.0,
+      13.3
+    ],
+    "median_err_D": 0.476
+  },
+  "human_left": {
+    "success": 0,
+    "n": 25,
+    "rate": 0.0,
+    "ci95": [
+      0.0,
+      13.3
+    ],
+    "median_err_D": 0.16
+  }
+}

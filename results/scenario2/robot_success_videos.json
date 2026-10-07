@@ -2,25 +2,25 @@
   {
     "init": 0,
     "success": true,
-    "offset_D": 0.011,
+    "offset_D": 0.012,
     "video": "results/scenario2/robot_success_init0.mp4",
-    "theta_deg": 106.6,
-    "lift_cm": 4.9
+    "theta_deg": 104.4,
+    "lift_cm": 4.8
   },
   {
     "init": 1,
     "success": true,
-    "offset_D": 0.006,
+    "offset_D": 0.013,
     "video": "results/scenario2/robot_success_init1.mp4",
-    "theta_deg": 111.9,
-    "lift_cm": 4.8
+    "theta_deg": 113.5,
+    "lift_cm": 5.4
   },
   {
     "init": 2,
     "success": true,
-    "offset_D": 0.022,
+    "offset_D": 0.014,
     "video": "results/scenario2/robot_success_init2.mp4",
-    "theta_deg": 107.7,
-    "lift_cm": 3.6
+    "theta_deg": 112.8,
+    "lift_cm": 4.5
   }
 ]

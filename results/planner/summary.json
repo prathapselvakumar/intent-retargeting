@@ -1,0 +1,962 @@
+[
+  {
+    "success": true,
+    "final_err_D": 0.013,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 2,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -1.4350307251681942,
+          "h": 0.020056194055498015,
+          "phi": 0.056957778445639526,
+          "d": 0.06349016752074334
+        },
+        "err_D": 0.013,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "human_prior",
+    "seed": 0,
+    "seconds": 11.5
+  },
+  {
+    "success": true,
+    "final_err_D": 0.004,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 47,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -2.2406487800996637,
+          "h": 0.011515176957728072,
+          "phi": -0.0137394920421616,
+          "d": 0.0599567769265667
+        },
+        "err_D": 0.004,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "human_prior",
+    "seed": 1,
+    "seconds": 14.2
+  },
+  {
+    "success": true,
+    "final_err_D": 0.003,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 18,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -2.7898748924632852,
+          "h": 0.017922519545062496,
+          "phi": 0.0656654080162837,
+          "d": 0.06671963783412789
+        },
+        "err_D": 0.003,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "human_prior",
+    "seed": 2,
+    "seconds": 14.2
+  },
+  {
+    "success": true,
+    "final_err_D": 0.007,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 3,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -2.418339661366821,
+          "h": 0.02950687150748498,
+          "phi": 0.0008546867055737872,
+          "d": 0.0753160939164209
+        },
+        "err_D": 0.007,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "human_prior",
+    "seed": 3,
+    "seconds": 14.6
+  },
+  {
+    "success": true,
+    "final_err_D": 0.006,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 11,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -0.4406635540440349,
+          "h": 0.011313580600100084,
+          "phi": -0.11084591425500953,
+          "d": 0.07041095512694535
+        },
+        "err_D": 0.006,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "human_prior",
+    "seed": 4,
+    "seconds": 14.4
+  },
+  {
+    "success": true,
+    "final_err_D": 0.03,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 67,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -2.1682446660632086,
+          "h": 0.045,
+          "phi": -0.09891743539047385,
+          "d": 0.07549831658840037
+        },
+        "err_D": 0.03,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "human_prior",
+    "seed": 5,
+    "seconds": 13.9
+  },
+  {
+    "success": true,
+    "final_err_D": 0.009,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 15,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -0.8464724608078222,
+          "h": 0.0256546465304225,
+          "phi": -0.048240747289974316,
+          "d": 0.06574420954097317
+        },
+        "err_D": 0.009,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "human_prior",
+    "seed": 6,
+    "seconds": 14.3
+  },
+  {
+    "success": true,
+    "final_err_D": 0.006,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 18,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -2.1795041986520873,
+          "h": 0.02859802244970832,
+          "phi": 0.00926883898334752,
+          "d": 0.07333916672099354
+        },
+        "err_D": 0.006,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "human_prior",
+    "seed": 7,
+    "seconds": 13.9
+  },
+  {
+    "success": true,
+    "final_err_D": 0.003,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 26,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -1.1212611703865165,
+          "h": 0.026085208340358126,
+          "phi": 0.05769087108974884,
+          "d": 0.06490374978873917
+        },
+        "err_D": 0.003,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "human_prior",
+    "seed": 8,
+    "seconds": 14.1
+  },
+  {
+    "success": true,
+    "final_err_D": 0.007,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 8,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -2.676796672548422,
+          "h": 0.025101507234860154,
+          "phi": 0.02143469420025934,
+          "d": 0.07062966485020415
+        },
+        "err_D": 0.007,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "human_prior",
+    "seed": 9,
+    "seconds": 14.6
+  },
+  {
+    "success": true,
+    "final_err_D": 0.011,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 7,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 0.7717234926703536,
+          "h": 0.04447046129907158,
+          "phi": 0.09833318102992249,
+          "d": 0.07266363831765536
+        },
+        "err_D": 0.011,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "no_prior",
+    "seed": 0,
+    "seconds": 14.3
+  },
+  {
+    "success": true,
+    "final_err_D": 0.009,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 22,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -1.5768606520523545,
+          "h": 0.023125230313688693,
+          "phi": 0.12222054471934142,
+          "d": 0.07008870419075144
+        },
+        "err_D": 0.009,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "no_prior",
+    "seed": 1,
+    "seconds": 12.7
+  },
+  {
+    "success": true,
+    "final_err_D": 0.006,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 3,
+    "steps": [
+      {
+        "prim": {
+          "mode": "inside",
+          "theta": 1.137291968751843,
+          "h": 0.0214746583660426,
+          "phi": -0.15378843083678284,
+          "d": 0.07069702913538536
+        },
+        "err_D": 0.006,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "no_prior",
+    "seed": 2,
+    "seconds": 12.4
+  },
+  {
+    "success": true,
+    "final_err_D": 0.009,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 3,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 0.5956311036789229,
+          "h": 0.02490059295337196,
+          "phi": 0.12945454697319694,
+          "d": 0.0659740112228353
+        },
+        "err_D": 0.009,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "no_prior",
+    "seed": 3,
+    "seconds": 13.4
+  },
+  {
+    "success": true,
+    "final_err_D": 0.006,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 2,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -0.8224100710392475,
+          "h": 0.03114354070991599,
+          "phi": -0.06510787218503812,
+          "d": 0.06738048902927199
+        },
+        "err_D": 0.006,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "no_prior",
+    "seed": 4,
+    "seconds": 13.6
+  },
+  {
+    "success": true,
+    "final_err_D": 0.004,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 62,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 0.14420290143062364,
+          "h": 0.04163027506579503,
+          "phi": 0.17970116143457798,
+          "d": 0.06866025102557473
+        },
+        "err_D": 0.004,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "no_prior",
+    "seed": 5,
+    "seconds": 13.2
+  },
+  {
+    "success": true,
+    "final_err_D": 0.012,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 28,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 0.8308949906205123,
+          "h": 0.024303629017949482,
+          "phi": 0.08780169205423093,
+          "d": 0.06299641884338773
+        },
+        "err_D": 0.012,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "no_prior",
+    "seed": 6,
+    "seconds": 13.3
+  },
+  {
+    "success": true,
+    "final_err_D": 0.004,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 18,
+    "steps": [
+      {
+        "prim": {
+          "mode": "push",
+          "theta": 3.120707801752658,
+          "h": 0.020243272852942952,
+          "phi": -0.04222103030617553,
+          "d": 0.07158040825071874
+        },
+        "err_D": 0.004,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "no_prior",
+    "seed": 7,
+    "seconds": 13.1
+  },
+  {
+    "success": true,
+    "final_err_D": 0.006,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 10,
+    "steps": [
+      {
+        "prim": {
+          "mode": "inside",
+          "theta": 1.0386114791115908,
+          "h": 0.012186955459326179,
+          "phi": -0.21770137565900022,
+          "d": 0.06936409981390888
+        },
+        "err_D": 0.006,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "no_prior",
+    "seed": 8,
+    "seconds": 12.7
+  },
+  {
+    "success": true,
+    "final_err_D": 0.006,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 8,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -0.5237435308312727,
+          "h": 0.008,
+          "phi": -0.07268880505340644,
+          "d": 0.06840713688443857
+        },
+        "err_D": 0.006,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_000_right",
+    "condition": "no_prior",
+    "seed": 9,
+    "seconds": 14.5
+  },
+  {
+    "success": true,
+    "final_err_D": 0.003,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 6,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 2.411794769212129,
+          "h": 0.023402716403463066,
+          "phi": -3.032569867804393,
+          "d": 0.0575090646719437
+        },
+        "err_D": 0.003,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "human_prior",
+    "seed": 0,
+    "seconds": 14.3
+  },
+  {
+    "success": true,
+    "final_err_D": 0.026,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 18,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 1.6976433073465191,
+          "h": 0.02321490493250471,
+          "phi": 3.23721813836232,
+          "d": 0.06120396895708349
+        },
+        "err_D": 0.026,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "human_prior",
+    "seed": 1,
+    "seconds": 13.1
+  },
+  {
+    "success": true,
+    "final_err_D": 0.01,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 18,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 1.8076964044108164,
+          "h": 0.03657934011073899,
+          "phi": -3.0915507255627968,
+          "d": 0.06572482142278085
+        },
+        "err_D": 0.01,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "human_prior",
+    "seed": 2,
+    "seconds": 13.7
+  },
+  {
+    "success": true,
+    "final_err_D": 0.005,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 18,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 1.8797242715434153,
+          "h": 0.008,
+          "phi": 3.103231595006528,
+          "d": 0.06833554182894169
+        },
+        "err_D": 0.005,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "human_prior",
+    "seed": 3,
+    "seconds": 13.9
+  },
+  {
+    "success": true,
+    "final_err_D": 0.019,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 11,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 1.5184376748029407,
+          "h": 0.023893286786174788,
+          "phi": 3.196649478507196,
+          "d": 0.06704647975623519
+        },
+        "err_D": 0.019,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "human_prior",
+    "seed": 4,
+    "seconds": 13.7
+  },
+  {
+    "success": true,
+    "final_err_D": 0.006,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 13,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 1.8770100057216785,
+          "h": 0.03175597472181103,
+          "phi": -3.0661322213581332,
+          "d": 0.0646065383452173
+        },
+        "err_D": 0.006,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "human_prior",
+    "seed": 5,
+    "seconds": 13.5
+  },
+  {
+    "success": true,
+    "final_err_D": 0.003,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 49,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 2.0340963123301403,
+          "h": 0.026609854732968456,
+          "phi": -3.0377790814319847,
+          "d": 0.06155467303895496
+        },
+        "err_D": 0.003,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "human_prior",
+    "seed": 6,
+    "seconds": 13.2
+  },
+  {
+    "success": true,
+    "final_err_D": 0.004,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 18,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 1.929664760241788,
+          "h": 0.028752306922633378,
+          "phi": -3.073048216191959,
+          "d": 0.061125682675525164
+        },
+        "err_D": 0.004,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "human_prior",
+    "seed": 7,
+    "seconds": 13.6
+  },
+  {
+    "success": true,
+    "final_err_D": 0.006,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 26,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 1.6097013149320578,
+          "h": 0.01174838661400887,
+          "phi": 3.242268548624651,
+          "d": 0.06885123944785275
+        },
+        "err_D": 0.006,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "human_prior",
+    "seed": 8,
+    "seconds": 13.4
+  },
+  {
+    "success": true,
+    "final_err_D": 0.008,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 8,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 2.279957606858513,
+          "h": 0.025882493866108285,
+          "phi": -3.042063237468087,
+          "d": 0.05891262846695568
+        },
+        "err_D": 0.008,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "human_prior",
+    "seed": 9,
+    "seconds": 13.9
+  },
+  {
+    "success": true,
+    "final_err_D": 0.011,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 6,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -2.9444909469312623,
+          "h": 0.025584788570117093,
+          "phi": 3.0264922444752687,
+          "d": 0.05580487834397165
+        },
+        "err_D": 0.011,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "no_prior",
+    "seed": 0,
+    "seconds": 13.9
+  },
+  {
+    "success": true,
+    "final_err_D": 0.005,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 59,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -3.0801766044870944,
+          "h": 0.027653844813182026,
+          "phi": 2.950828233698485,
+          "d": 0.055542068746074556
+        },
+        "err_D": 0.005,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "no_prior",
+    "seed": 1,
+    "seconds": 12.2
+  },
+  {
+    "success": true,
+    "final_err_D": 0.017,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 50,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -2.51708237302833,
+          "h": 0.016125575318747008,
+          "phi": 3.0921936136653487,
+          "d": 0.05825825299097003
+        },
+        "err_D": 0.017,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "no_prior",
+    "seed": 2,
+    "seconds": 12.6
+  },
+  {
+    "success": true,
+    "final_err_D": 0.005,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 26,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 2.0996734470286036,
+          "h": 0.02595729663357084,
+          "phi": -3.017062820249828,
+          "d": 0.061158570755052356
+        },
+        "err_D": 0.005,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "no_prior",
+    "seed": 3,
+    "seconds": 13.1
+  },
+  {
+    "success": true,
+    "final_err_D": 0.006,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 7,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -0.6505429774923019,
+          "h": 0.026313839098201456,
+          "phi": 3.0662390564415984,
+          "d": 0.06779271645245234
+        },
+        "err_D": 0.006,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "no_prior",
+    "seed": 4,
+    "seconds": 13.4
+  },
+  {
+    "success": true,
+    "final_err_D": 0.008,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 47,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 3.1573377883714024,
+          "h": 0.028480715330673735,
+          "phi": 2.9598837343706785,
+          "d": 0.053566318235860375
+        },
+        "err_D": 0.008,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "no_prior",
+    "seed": 5,
+    "seconds": 13.0
+  },
+  {
+    "success": true,
+    "final_err_D": 0.015,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 3,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 2.826615283694078,
+          "h": 0.024658815523585922,
+          "phi": -3.0921206899051734,
+          "d": 0.05507912896573412
+        },
+        "err_D": 0.015,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "no_prior",
+    "seed": 6,
+    "seconds": 13.3
+  },
+  {
+    "success": true,
+    "final_err_D": 0.007,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 18,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": 0.5220645382233855,
+          "h": 0.034322861547857436,
+          "phi": -3.1824118631848393,
+          "d": 0.0660888479297211
+        },
+        "err_D": 0.007,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "no_prior",
+    "seed": 7,
+    "seconds": 13.3
+  },
+  {
+    "success": true,
+    "final_err_D": 0.004,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 19,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -0.9094365200790943,
+          "h": 0.008,
+          "phi": 3.002646638112712,
+          "d": 0.07060113238349815
+        },
+        "err_D": 0.004,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "no_prior",
+    "seed": 8,
+    "seconds": 13.2
+  },
+  {
+    "success": true,
+    "final_err_D": 0.013,
+    "n_prims": 1,
+    "rollouts": 192,
+    "rollouts_to_first_success": 8,
+    "steps": [
+      {
+        "prim": {
+          "mode": "pinch",
+          "theta": -2.2237964642841943,
+          "h": 0.021844078855892568,
+          "phi": 2.93994063148107,
+          "d": 0.057760443068460024
+        },
+        "err_D": 0.013,
+        "tilt_deg": 0.0
+      }
+    ],
+    "video": "episode_050_left",
+    "condition": "no_prior",
+    "seed": 9,
+    "seconds": 13.7
+  }
+]

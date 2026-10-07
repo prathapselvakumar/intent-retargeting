@@ -1,0 +1,41 @@
+{
+  "method": "smolvla",
+  "ckpt": "runs/smolvla_v2_s1/checkpoints/020000/pretrained_model",
+  "n_action_steps": 5,
+  "random": {
+    "success": 33,
+    "n": 50,
+    "rate": 66.0,
+    "ci95": [
+      52.2,
+      77.6
+    ],
+    "median_err_D": 0.073,
+    "ms_per_step_mean": 25.1,
+    "ms_per_chunk_query": 119.4
+  },
+  "human_right": {
+    "success": 32,
+    "n": 50,
+    "rate": 64.0,
+    "ci95": [
+      50.1,
+      75.9
+    ],
+    "median_err_D": 0.082,
+    "ms_per_step_mean": 25.2,
+    "ms_per_chunk_query": 119.8
+  },
+  "human_left": {
+    "success": 49,
+    "n": 50,
+    "rate": 98.0,
+    "ci95": [
+      89.5,
+      99.6
+    ],
+    "median_err_D": 0.045,
+    "ms_per_step_mean": 25.1,
+    "ms_per_chunk_query": 119.7
+  }
+}

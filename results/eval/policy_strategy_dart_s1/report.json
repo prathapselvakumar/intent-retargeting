@@ -1,0 +1,36 @@
+{
+  "method": "policy_strategy_dart_s1",
+  "random": {
+    "success": 45,
+    "n": 50,
+    "rate": 90.0,
+    "ci95": [
+      78.6,
+      95.7
+    ],
+    "median_err_D": 0.038,
+    "policy_ms_per_query": 0.69
+  },
+  "human_right": {
+    "success": 48,
+    "n": 50,
+    "rate": 96.0,
+    "ci95": [
+      86.5,
+      98.9
+    ],
+    "median_err_D": 0.036,
+    "policy_ms_per_query": 0.62
+  },
+  "human_left": {
+    "success": 44,
+    "n": 50,
+    "rate": 88.0,
+    "ci95": [
+      76.2,
+      94.4
+    ],
+    "median_err_D": 0.068,
+    "policy_ms_per_query": 0.66
+  }
+}

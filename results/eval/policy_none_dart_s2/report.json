@@ -1,0 +1,36 @@
+{
+  "method": "policy_none_dart_s2",
+  "random": {
+    "success": 43,
+    "n": 50,
+    "rate": 86.0,
+    "ci95": [
+      73.8,
+      93.0
+    ],
+    "median_err_D": 0.06,
+    "policy_ms_per_query": 0.64
+  },
+  "human_right": {
+    "success": 42,
+    "n": 50,
+    "rate": 84.0,
+    "ci95": [
+      71.5,
+      91.7
+    ],
+    "median_err_D": 0.051,
+    "policy_ms_per_query": 0.71
+  },
+  "human_left": {
+    "success": 39,
+    "n": 50,
+    "rate": 78.0,
+    "ci95": [
+      64.8,
+      87.2
+    ],
+    "median_err_D": 0.058,
+    "policy_ms_per_query": 0.71
+  }
+}
