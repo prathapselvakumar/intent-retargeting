@@ -84,7 +84,7 @@ def main():
         off = float(np.linalg.norm(env.bowl_pos()[:2] - env.plate_pos()[:2]) / D)
         hum = human_frames(len(robot))
         frames = []
-        for i, (h, (front, top)) in enumerate(zip(hum, robot)):
+        for h, (front, top) in zip(hum, robot):
             frames.append(np.hstack([label(h, "my clip", True), label(front, "LIBERO front", True),
                                      label(top, "LIBERO top", True)]))
         last = np.hstack([label(hum[-1], "my clip", True), label(robot[-1][0], f"LIBERO success: {ok}", ok),

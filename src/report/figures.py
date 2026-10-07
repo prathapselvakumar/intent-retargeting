@@ -178,7 +178,7 @@ def scenario2_results(out=Path("results/figures/scenario2_results.png"), human_g
     ax = axes[0]
     counts = [(sum(r["success"] for r in replay), len(replay))] + \
              [(sum(r["executed_success"] for r in runs[c]), len(runs[c])) for c in ("none", "human")]
-    for i, ((name, col, _), (k, n)) in enumerate(zip(groups, counts)):
+    for i, ((_, col, _), (k, n)) in enumerate(zip(groups, counts)):
         lo, hi = wilson(k, n)
         ax.bar(i, 100 * k / n, 0.62, color=col, edgecolor=SURF, linewidth=2, zorder=3)
         ax.errorbar(i, 100 * k / n, yerr=[[100 * k / n - 100 * lo], [100 * hi - 100 * k / n]], fmt="none",

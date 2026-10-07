@@ -70,5 +70,29 @@
     "theta_deg": 135.3,
     "lift_cm": 5.6,
     "seconds": 20
+  },
+  {
+    "init": 3,
+    "condition": "human",
+    "planned_success": true,
+    "first_success_at": 1,
+    "rollouts": 90,
+    "executed_success": true,
+    "offset_D": 0.008,
+    "theta_deg": 160.1,
+    "lift_cm": 5.7,
+    "seconds": 23
+  },
+  {
+    "init": 3,
+    "condition": "none",
+    "planned_success": true,
+    "first_success_at": 4,
+    "rollouts": 90,
+    "executed_success": true,
+    "offset_D": 0.004,
+    "theta_deg": 51.6,
+    "lift_cm": 5.9,
+    "seconds": 17
   }
 ]
