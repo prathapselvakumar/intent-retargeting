@@ -18,3 +18,4 @@ small data/processed/scene/scenario2_plate_scene.mp4 results/scenario2/tracking_
 gif results/planner/episode_050_left_human_prior.mp4 results/figures/hero_left_clip_vs_robot.gif
 gif results/scenario2/robot_success_init1.mp4        results/figures/scenario2_success.gif
 .venv-extract/bin/python src/report/figures.py --scenario2
+.venv/bin/python src/report/demo_video.py

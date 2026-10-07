@@ -4,6 +4,8 @@ I filmed my own hands moving a bowl with an iPhone, then used those clips to dri
 
 ![My clip (left) and the Panda reproducing its effect, front and top views](results/figures/hero_left_clip_vs_robot.gif)
 
+A 46-second walkthrough of the whole project: [`results/figures/demo.mp4`](results/figures/demo.mp4).
+
 ## Main result
 
 Replaying my hand motion on the robot never succeeds (0 of 80 tasks across both scenarios). A policy trained on demonstrations that a planner found by reproducing the bowl's motion succeeds on 96.2% of held-out tasks when the planner is seeded with my grip strategy, and on 73.6% without it (3 training seeds, 150 tasks each). SmolVLA fine-tuned on the same demonstrations, seeing only camera images, reaches 77.1% ± 0.8 (3 seeds).
