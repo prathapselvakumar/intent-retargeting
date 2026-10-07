@@ -1,0 +1,26 @@
+[
+  {
+    "init": 0,
+    "condition": "human",
+    "planned_success": true,
+    "first_success_at": 2,
+    "rollouts": 90,
+    "executed_success": true,
+    "offset_D": 0.016,
+    "theta_deg": 104.4,
+    "lift_cm": 4.8,
+    "seconds": 30
+  },
+  {
+    "init": 0,
+    "condition": "none",
+    "planned_success": true,
+    "first_success_at": 1,
+    "rollouts": 90,
+    "executed_success": true,
+    "offset_D": 0.021,
+    "theta_deg": 92.6,
+    "lift_cm": 7.8,
+    "seconds": 18
+  }
+]

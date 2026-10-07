@@ -46,14 +46,31 @@ class PlateEnv(BowlEnv):
         self.cameras = cameras
         self.action_noise = 0.0
 
-    def reset(self, init_idx=0, seed=0):
-        """Official LIBERO initial state `init_idx` (0–49); LIBERO's default physics."""
+    def reset(self, init_idx=0, seed=0, jitter=0.0, rng=None):
+        """Official LIBERO initial state `init_idx` (0–49); LIBERO's default physics.
+
+        jitter > 0 shifts the bowl and the plate independently by up to `jitter` metres in x and
+        y (keeping them apart), which makes training starts that differ from the 50 official
+        ones used for evaluation."""
         self.env.seed(seed)
         self.env.reset()
         self.env.set_init_state(self.init_states[init_idx % len(self.init_states)])
         self._bind()
         m = self.sim.model
         self.plate_bodies = [i for i in range(m.nbody) if PLATE in m.body_id2name(i)]
+        if jitter > 0:
+            rng = rng or np.random.default_rng()
+            d = self.sim.data
+            adr = {b: m.jnt_qposadr[m.body_jntadr[b]] for b in (self.bowl_bodies[0], self.plate_bodies[0])}
+            base = {b: d.qpos[a:a + 2].copy() for b, a in adr.items()}
+            for _ in range(100):
+                shift = {b: rng.uniform(-jitter, jitter, 2) for b in adr}
+                pb, pp = (base[b] + shift[b] for b in adr)
+                if np.linalg.norm(pb - pp) > 0.13:            # bowl rim clear of the plate rim
+                    break
+            for b, a in adr.items():
+                d.qpos[a:a + 2] = base[b] + shift[b]
+            self.sim.forward()
         for _ in range(SETTLE_STEPS):
             self.step(np.zeros(7))
         lo, hi = self._bowl_extent()
@@ -160,12 +177,16 @@ def _init_worker():
 
 
 def _rollout(args):
-    init_idx, prim = args
-    if _W.cur != init_idx:
-        _W.reset(init_idx)
-        _W.cur = init_idx
-        _W.start = _W.get_state()
-    _W.set_state(_W.start)
+    """start: an official initial-state index, or a simulator state to start from."""
+    start, prim = args
+    if isinstance(start, (int, np.integer)):
+        if _W.cur != start:
+            _W.reset(int(start))
+            _W.cur = int(start)
+            _W.start = _W.get_state()
+        _W.set_state(_W.start)
+    else:
+        _W.set_state(start)
     tilts = execute(_W, Pick(**prim))
     return cost(_W, tilts)
 
@@ -179,6 +200,7 @@ class PickPlanner:
         self.pool.join()
 
     def plan(self, init_idx, D, prior=None, rng=None, pop=48, elites=8, iters=4):
+        """init_idx: an official initial-state index, or a simulator state (env.get_state())."""
         rng = rng or np.random.default_rng()
         th_mu, th_sd = (prior["theta"], prior["theta_sd"]) if prior else (0.0, None)
         lift_mu = prior["lift_D"] * D if prior else np.mean(LIFT_RANGE)
